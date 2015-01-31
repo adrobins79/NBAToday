@@ -32,11 +32,6 @@ public class GetScheduleTask extends AsyncTask<Void, Void, ArrayList<Map<String,
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-    }
-
-    @Override
     protected ArrayList<Map<String, String>> doInBackground(Void... arg0) {
         ArrayList<Map<String, String>> dataList = new ArrayList<Map<String, String>>();
 
@@ -90,6 +85,7 @@ public class GetScheduleTask extends AsyncTask<Void, Void, ArrayList<Map<String,
     @Override
     protected void onPostExecute(ArrayList<Map<String, String>> dataList) {
         super.onPostExecute(dataList);
+
         ListView list = (ListView) activity.findViewById(R.id.list);
         TextView scheduleDate = (TextView)activity.findViewById(R.id.scheduleDate);
         if(dataList.size() > 0) {
@@ -98,11 +94,12 @@ public class GetScheduleTask extends AsyncTask<Void, Void, ArrayList<Map<String,
         ListAdapter adapter = new SimpleAdapter(
                 activity,
                 dataList,
-                R.layout.list_item,
+                R.layout.schedule_list_item,
                 new String[] {"match"},
                 new int[] { R.id.name});
 
         list.setAdapter(adapter);
+
     }
 
 }
