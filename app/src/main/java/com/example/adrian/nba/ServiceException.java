@@ -1,4 +1,4 @@
-package com.example.adrian.nbaplayers;
+package com.example.adrian.nba;
 
 /**
  * Created by adrian on 1/8/15.

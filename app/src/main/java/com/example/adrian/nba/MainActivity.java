@@ -1,4 +1,4 @@
-package com.example.adrian.nbaplayers;
+package com.example.adrian.nba;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;

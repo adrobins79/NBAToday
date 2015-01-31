@@ -1,4 +1,4 @@
-package com.example.adrian.nbaplayers;
+package com.example.adrian.nba;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
