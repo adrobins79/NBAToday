@@ -6,37 +6,28 @@
     android:id="@+id/schedule_layout"
     android:background="#fff"
     >
-    <LinearLayout
+
+
+
+    <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text=""
+        android:id="@+id/scheduleDate"
+        android:gravity="center"
+        android:autoText="true"
+        android:background="#ff05105f"
+        android:textColor="#ffffffff" />
+        />
 
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text=""
-            android:id="@+id/scheduleDate"
-            android:gravity="center"
-            android:autoText="true"
-            android:background="#ff05105f"
-            android:textColor="#ffffffff" />
-            />
 
-    </LinearLayout>
-
-    <LinearLayout
+    <ListView
+        android:id="@+id/list"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"/>
 
-        <ListView
-            android:id="@+id/list"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"/>
 
-    </LinearLayout>
 
 </LinearLayout>

@@ -14,7 +14,6 @@
         android:id="@+id/matchup"
         android:background="#ff05105f"
         android:textColor="#ffffffff"
-
         />
     <TextView
         android:layout_width="fill_parent"
@@ -23,7 +22,6 @@
         android:id="@+id/arena"
         android:background="#ffffffff"
         android:textColor="#ff5e5e5e"
-
         />
 
 
@@ -42,6 +40,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/home_player_list"
+        android:layout_weight="1"
         />
 
     <TextView
@@ -58,6 +57,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/away_player_list"
+        android:layout_weight="1"
         />
 
 
