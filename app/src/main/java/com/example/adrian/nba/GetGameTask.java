@@ -25,18 +25,25 @@ import java.util.Map;
 /**
  * Async task class to get json by making HTTP call
  * */
-public class GetGameTask extends AsyncTask<Void, Void,Map<String, String[]>>{
+public class GetGameTask extends AsyncTask<Void, Void,Void>{
     private Activity activity;
     private String url = "http://mi.nba.com/statsm2/game/snapshot.json";
+    private String rosterUrl = "http://mi.nba.com/statsm2/team/roster.json";
     private String gameId;
+    private String matchupText;
+    private String arenaName;
+    private Team homeTeam;
+    private Team awayTeam;
     public GetGameTask(String gameId, Activity activity){
 
         this.activity = activity;
         this.gameId = gameId;
+        homeTeam = new Team();
+        awayTeam = new Team();
     }
 
     @Override
-    protected Map<String, String[]> doInBackground(Void... arg0) {
+    protected Void doInBackground(Void... arg0) {
         HashMap<String, String[]> map = new HashMap<String, String[]>();
 
         HttpService http = new HttpService();
@@ -53,76 +60,78 @@ public class GetGameTask extends AsyncTask<Void, Void,Map<String, String[]>>{
             JSONObject payload = json.getJSONObject("payload");
             JSONObject gameProfile = payload.getJSONObject("gameProfile");
 
-            String [] homePlayers =null;
-            String [] awayPlayers = null;
-            String homeTeamName  = parseTeam(payload, "homeTeam", homePlayers);
-            String awayTeamName  = parseTeam(payload, "awayTeam", awayPlayers);
-            map.put("homeName",new String[]{homeTeamName});
-            map.put("awayName",new String[]{awayTeamName});
+            loadTeam(http, payload.getJSONObject("homeTeam"),homeTeam);
+            loadTeam(http, payload.getJSONObject("awayTeam"),awayTeam);
 
+            arenaName = gameProfile.getString("arenaName");
+            matchupText = awayTeam.getDisplayName() + " @ " + homeTeam.getDisplayName();
 
-            String arenaName = gameProfile.getString("arenaName");
-            map.put("arenaName",new String[]{arenaName});
-            map.put("matchup", new String[]{awayTeamName + " @ " + homeTeamName});
-            map.put("home", homePlayers);
-            map.put("away", awayPlayers);
 
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (ServiceException e) {
             e.printStackTrace();
         }
-        return map;
+        return null;
     }
 
-    private String parseTeam(JSONObject payload, String prop, String [] players) throws JSONException {
-        JSONObject homeTeam = payload.getJSONObject(prop);
+    private void loadTeam(HttpService http, JSONObject teamNode,Team team) throws JSONException, ServiceException {
+        JSONObject profile = teamNode.getJSONObject("profile");
 
-        JSONArray gamePlayers = homeTeam.getJSONArray("gamePlayers");
-        players = new String[gamePlayers.length()];
-        for(int i =0; i < gamePlayers.length(); i++){
-            JSONObject player = gamePlayers.getJSONObject(i);
-            JSONObject profile = player.getJSONObject("profile");
-            String displayName = profile.getString("displayName");
-            players[i] = displayName;
+        List<NameValuePair> params;
+        params = new ArrayList<NameValuePair>();
+
+        params.add(new BasicNameValuePair("teamId",profile.getString("id")));
+
+        JSONObject rosterRoot = new JSONObject(http.get(rosterUrl,params));
+        JSONArray players = rosterRoot.getJSONObject("payload").getJSONArray("players");
+
+        String [] names = new String[players.length()];
+        for(int i =0; i < players.length(); i++){
+            JSONObject player = players.getJSONObject(i);
+            String displayName = player.getJSONObject("profile").getString("displayName");
+            names[i] = displayName;
         }
-        return homeTeam.getJSONObject("profile").getString("city") + " " + homeTeam.getJSONObject("profile").getString("name");
+
+        team.setDisplayName(teamNode.getJSONObject("profile").getString("city") + " " + teamNode.getJSONObject("profile").getString("name"));
+        team.setPlayerNames(names);
     }
 
     @Override
-    protected void onPostExecute(Map<String, String[]> dataMap) {
-        super.onPostExecute(dataMap);
+    protected void onPostExecute(Void v) {
+        super.onPostExecute(v);
 
-        TextView arenaName = (TextView)activity.findViewById(R.id.arena);
-        arenaName.setText(dataMap.get("arenaName")[0]);
-        TextView matchup = (TextView)activity.findViewById(R.id.matchup);
-        matchup.setText(dataMap.get("matchup")[0]);
+        TextView arenaNameTV = (TextView)activity.findViewById(R.id.arena);
+        arenaNameTV.setText(arenaName);
+        TextView matchupTV = (TextView)activity.findViewById(R.id.matchup);
+        matchupTV.setText(matchupText);
 
-        ArrayList<Map<String, String>> dataList = new ArrayList<Map<String, String>>();
+        TextView homeNameTV = (TextView)activity.findViewById(R.id.home_team_name);
+        homeNameTV.setText(homeTeam.getDisplayName());
+        populatePlayerList(homeTeam,(ListView) activity.findViewById(R.id.home_player_list));
 
-        //showPlayerList(dataList, dataMap.get("home"));
-        //showPlayerList(dataList, dataMap.get("away"));
-
-
-
+        TextView awayNameTV = (TextView)activity.findViewById(R.id.away_team_name);
+        awayNameTV.setText(awayTeam.getDisplayName());
+        populatePlayerList(awayTeam,(ListView) activity.findViewById(R.id.away_player_list) );
     }
 
-    private void showPlayerList(ArrayList<Map<String, String>> dataList, String[] homePlayers) {
+    private void populatePlayerList(Team team, ListView lv) {
 
-        ListView list = (ListView) activity.findViewById(R.id.player_list);
-        for(int i=0; i < homePlayers.length; i++){
+        ArrayList<Map<String, String>> mapList = new ArrayList<>();
+
+        for(int i=0; i < team.getPlayerNames().length; i++){
             Map<String,String> playerMap = new HashMap();
-            playerMap.put("name",homePlayers[i]);
-            dataList.add(playerMap);
+            playerMap.put("name",team.getPlayerNames()[i]);
+            mapList.add(playerMap);
         }
-        ListAdapter adapter = new SimpleAdapter(
+        ListAdapter homeAdapter = new SimpleAdapter(
                 activity,
-                dataList,
+                mapList,
                 R.layout.player_list_item,
                 new String[] {"name"},
                 new int[] { R.id.name});
 
-        list.setAdapter(adapter);
+        lv.setAdapter(homeAdapter);
     }
 
 }

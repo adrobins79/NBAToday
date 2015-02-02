@@ -10,8 +10,12 @@
         android:layout_height="fill_parent"
         android:paddingBottom="2dip"
         android:paddingTop="6dip"
-        android:textColor="#43bd00"
+        android:textColor="#000"
+        android:background="#fff" />
         android:textSize="16sp"
-        android:textStyle="bold" />
+
+
+
+        />
 
 </LinearLayout>
