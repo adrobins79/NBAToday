@@ -4,7 +4,7 @@
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:id="@+id/game_layout"
-    >
+    android:background="#ffffffff">
 
     <TextView
         android:layout_width="fill_parent"
