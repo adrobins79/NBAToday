@@ -11,8 +11,8 @@
         android:paddingBottom="2dip"
         android:paddingTop="6dip"
         android:textColor="#000"
-        android:background="#fff" />
-        android:textSize="16sp"
+        android:background="#fff"
+        android:textSize="16sp" />
 
 
 
