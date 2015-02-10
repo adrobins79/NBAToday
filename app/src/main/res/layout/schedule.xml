@@ -18,7 +18,7 @@
         android:gravity="center"
         android:autoText="true"
         android:background="#ff05105f"
-        android:textColor="#ffffffff" />
+        android:textColor="#ffffffff"
         />
 
 
